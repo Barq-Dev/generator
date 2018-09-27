@@ -1,0 +1,16 @@
+{
+    "name": "thortech/generator",
+    "description": "module unutk memudahkan pembuatan CRUD dengan menggunakan pola yang umum digunakan",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Trias Bratayudhana",
+            "email": "triasbrata@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+      "php": "^7.*"
+    }
+}

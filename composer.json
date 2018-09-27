@@ -9,8 +9,13 @@
             "email": "triasbrata@gmail.com"
         }
     ],
+    "autoload": {
+      "psr-4": {
+        "Generator\\": "src/"
+      }
+    },
     "minimum-stability": "dev",
     "require": {
-      "php": "^7.*"
+      "php": "^7.1.3"
     }
 }

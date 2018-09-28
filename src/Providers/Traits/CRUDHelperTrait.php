@@ -89,9 +89,11 @@ trait CRUDHelperTrait
 		if (!property_exists($this, 'role')) {
 			throw new \Exception('Attribute [role] in ' . get_class($this) . ' Must be exsist', 1);
 		}
+
 		$list_url = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+
 		foreach ($list_url as $url) {
-			$module_url[$url] = "{$this->role}.$module.$url";
+			$module_url[$url] = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
 		}
 		$module_url['back'] = url()->previous() == url()->current() ? route($module_url['index']) : url()->previous();
 
@@ -240,10 +242,11 @@ trait CRUDHelperTrait
 	 */
 	public function redirectFail(Request $request, $message = 'Gagal')
 	{
-		if($message = 'Gagal'){
+		if ($message = 'Gagal') {
 			// Antisipasi jika $message tidak terisi
 			return $this->redirectBackWithoutErrorMessage($request);
 		}
+
 		return $this->redirectBackWithError($request, $message);
 	}
 }

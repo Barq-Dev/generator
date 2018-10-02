@@ -1,9 +1,10 @@
 <?php
 namespace Generator\Providers\Traits;
 
+use stdClass;
+use Exception;
 use Illuminate\Http\Request;
 use Generator\Interfaces\RepositoryInterface;
-use Exception;
 
 trait CRUDHelperTrait
 {
@@ -90,14 +91,14 @@ trait CRUDHelperTrait
 			throw new \Exception('Attribute [role] in ' . get_class($this) . ' Must be exsist', 1);
 		}
 
-		$list_url = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
-
+		$list_url   = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+		$module_url = new stdClass();
 		foreach ($list_url as $url) {
-			$module_url[$url] = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
+			$module_url->{$url} = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
 		}
-		$module_url['back'] = url()->previous() == url()->current() ? route($module_url['index']) : url()->previous();
+		$module_url->url = url()->previous() == url()->current() ? route($module_url['index']) : url()->previous();
 
-		return json_decode(json_encode($module_url), false);
+		return $module_url;
 	}
 
 	/**

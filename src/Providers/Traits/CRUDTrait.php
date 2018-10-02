@@ -67,13 +67,13 @@ trait CRUDTrait
 			}
 			DB::commit();
 
-			return $this->redirectSuccess($request, $resul);
+			return $this->redirectSuccess('create', $request, $resul);
 		} catch (Exception $e) {
 			DB::rollback();
 			if (config('app.debug')) {
 				throw $e;
 			} else {
-				return $this->redirectFail($request, $e);
+				return $this->redirectFail('create', $request, $e);
 			}
 		}
 	}
@@ -149,13 +149,13 @@ trait CRUDTrait
 			}
 			DB::commit();
 
-			return $this->redirectSuccess($request, $result);
+			return $this->redirectSuccess('update', $request, $result);
 		} catch (Exception $e) {
 			DB::rollback();
 			if (config('app.debug')) {
 				throw $e;
 			} else {
-				return $this->redirectFail($request, $e->getMessage());
+				return $this->redirectFail('update', $request, $e->getMessage());
 			}
 		}
 	}
@@ -169,6 +169,7 @@ trait CRUDTrait
 	 */
 	public function destroy($id)
 	{
+		$request = $this->getRequest();
 		$this->generateNameModule();
 
 		DB::beginTransaction();
@@ -176,13 +177,13 @@ trait CRUDTrait
 			$this->getModel()->delete($id);
 			DB::commit();
 
-			return $this->redirectSuccess(app(Request::class));
+			return $this->redirectSuccess('delete', $request);
 		} catch (Exception $e) {
 			DB::rollback();
 			if (config('app.debug')) {
 				throw $e;
 			} else {
-				return $this->redirectFail(app(Request::class));
+				return $this->redirectFail('delete', $request);
 			}
 		}
 	}

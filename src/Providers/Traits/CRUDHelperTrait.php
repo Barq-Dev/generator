@@ -27,7 +27,7 @@ trait CRUDHelperTrait
 
 		$title_document = isset($params[2]['title_document']) ? $ $params[2]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
-		$output = call_user_func_array('view', $params)->with('module_url', $this->module_url($this->module))
+		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
 													->with('title', $this->title)
 													->with('title_document', $title_document);
 		if (in_array($view_name, ['edit', 'create'])) {
@@ -80,9 +80,9 @@ trait CRUDHelperTrait
 		return $this->title;
 	}
 
-	public function module_url($module)
+	public function moduleURL($module = null)
 	{
-		$module = str_replace(["{$this->viewNamespace}_", '_'], ['_', '-'], $module);
+		$module = str_replace(["{$this->viewNamespace}_", '_'], ['_', '-'], $module ?? $this->module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;
 		}
@@ -160,13 +160,45 @@ trait CRUDHelperTrait
 		if ($request->ajax()) {
 			return [
 				'message' => 'Berhasil Menambah/Memperbarui data',
-				'url'     => route($this->module_url($this->module)->index),
+				'url'     => route($this->moduleURL()->index),
 				'type'    => 'success',
 			];
 		}
 
-		return redirect()->route($this->module_url($this->module)->index)
+		return redirect()->route($this->moduleURL()->index)
 						 ->withMessage('Berhasil Menambah/Memperbarui data');
+	}
+
+	public function messageSuccessOrFail($methodCUD, $isSuccessOrFail)
+	{
+		$entitas          = $this->title ?? 'Entitas';
+		$translatedMethod = $this->translatedActionMethod();
+
+		return sprintf($this->messageFormat(), $entitas, $translatedMethod[$methodCUD]);
+	}
+
+	public function translatedActionMethod()
+	{
+		return [
+			'POST'   => 'ditambah',
+			'PUT'    => 'diubah',
+			'DELETE' => 'dihapus',
+		];
+	}
+
+	public function messageFormat($isSuccess = true)
+	{
+		return $isSuccess ? '%s berhasil %s' : '%s gagal %s';
+	}
+
+	public function messageSucces(Request $request)
+	{
+		return $this->messageSuccessOrFail($request->getMethod(), true);
+	}
+
+	public function messageFail(Request $request)
+	{
+		return $this->messageSuccessOrFail($request->getMethod(), false);
 	}
 
 	/**
@@ -175,8 +207,9 @@ trait CRUDHelperTrait
 	 *
 	 * @return redirect
 	 */
-	public function redirectBackWithError(Request $request, $message = 'Aksi gagal')
+	public function redirectBackWithError(Request $request, $message = null)
 	{
+		$message = $message ?? $this->messageFail($request);
 		if ($request->ajax()) {
 			return [
 				'message' => $message,
@@ -184,7 +217,7 @@ trait CRUDHelperTrait
 			];
 		}
 
-		return redirect()->back()->withInput()->withErrors($message);
+		return redirect()->back()->withInput()->withMessageError($message);
 	}
 
 	/**
@@ -195,15 +228,16 @@ trait CRUDHelperTrait
 	 */
 	public function redirectBackWithoutErrorMessage(Request $request)
 	{
+		$message = $this->messageFail($request);
 		if ($request->ajax()) {
 			return [
-				'message' => 'Aksi Gagal',
+				'message' => $message,
 				'type'    => 'error',
 			];
 		}
 
-		return redirect()->route($this->module_url($this->module)->index)
-			->withMessage(session()->get('message'));
+		return redirect()->route($this->moduleURL()->index)
+			->withMessage($message);
 	}
 
 	/**

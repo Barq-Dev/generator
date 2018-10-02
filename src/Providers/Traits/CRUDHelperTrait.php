@@ -82,7 +82,7 @@ trait CRUDHelperTrait
 
 	public function module_url($module)
 	{
-		$module = str_replace(["{$this->viewNamespace}_", '_'], ['_', '-'], $module);
+		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;
 		}

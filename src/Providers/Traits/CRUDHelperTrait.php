@@ -96,7 +96,7 @@ trait CRUDHelperTrait
 		foreach ($list_url as $url) {
 			$module_url->{$url} = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
 		}
-		$module_url->url = url()->previous() == url()->current() ? route($module_url['index']) : url()->previous();
+		$module_url->back = url()->previous() == url()->current() ? route($module_url->{'index'}) : url()->previous();
 
 		return $module_url;
 	}

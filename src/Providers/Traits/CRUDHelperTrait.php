@@ -219,7 +219,7 @@ trait CRUDHelperTrait
 
 	public function messageFormat($isSuccess = true)
 	{
-		return $isSuccess ? '%s berhasil %s' : '%s gagal %s';
+		return $isSuccess ? config('generator.message_format.true') : config('generator.message_format.false');
 	}
 
 	/**
@@ -309,6 +309,6 @@ trait CRUDHelperTrait
 
 	public function dontReportException()
 	{
-		return config('generator.dontReportException');
+		return config('generator.dont_report_exception');
 	}
 }

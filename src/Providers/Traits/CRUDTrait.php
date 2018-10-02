@@ -73,7 +73,7 @@ trait CRUDTrait
 			if (config('app.debug')) {
 				throw $e;
 			} else {
-				return $this->redirectFail($request, $e->getMessage());
+				return $this->redirectFail($request, $e);
 			}
 		}
 	}
@@ -170,17 +170,18 @@ trait CRUDTrait
 	public function destroy($id)
 	{
 		$this->generateNameModule();
-		
+
 		DB::beginTransaction();
 		try {
 			$this->getModel()->delete($id);
 			DB::commit();
+
 			return $this->redirectSuccess(app(Request::class));
-		} catch(Exception $e){
+		} catch (Exception $e) {
 			DB::rollback();
-			if (config('app.debug')){
+			if (config('app.debug')) {
 				throw $e;
-			}else{
+			} else {
 				return $this->redirectFail(app(Request::class));
 			}
 		}

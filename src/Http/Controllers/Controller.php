@@ -35,6 +35,7 @@ class Controller extends BaseController
 	private function getNamespace()
 	{
 		$reflection = new \ReflectionClass($this);
+
 		return $reflection->getNamespaceName();
 	}
 

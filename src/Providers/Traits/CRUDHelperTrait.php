@@ -8,6 +8,9 @@ use Generator\Interfaces\RepositoryInterface;
 
 trait CRUDHelperTrait
 {
+	protected $route_names_need_id = ['show', 'edit', 'update', 'destroy'];
+	protected $route_names         = ['index', 'create', 'store'];
+
 	/**
 	 * untuk menampilkan view.
 	 *
@@ -17,6 +20,7 @@ trait CRUDHelperTrait
 	{
 		$this->checkProperty(['title']);
 		$params = func_get_args();
+
 		if (property_exists($this, 'viewNamespace') && null !== $this->viewNamespace) {
 			$view_url  = str_start(str_replace(str_finish($this->viewNamespace, '_'), str_finish($this->viewNamespace, '::'), $params[0]), str_finish($this->viewNamespace, '::'));
 			$params[0] = $view_url;
@@ -26,9 +30,9 @@ trait CRUDHelperTrait
 		$view_folder = collect(\explode('.', $view_url));
 		$view_name   = $view_folder->pop();
 
-		$title_document = isset($params[2]['title_document']) ? $ $params[2]['title_document'] : $this->makeTitleDocument($view_url);
+		$title_document = isset($params[1]['title_document']) ? $ $params[1]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
-		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
+		$output = call_user_func_array('view', $params)->with('module_url', $this->generateModuleRouteName())
 													->with('title', $this->title)
 													->with('title_document', $title_document);
 		if (in_array($view_name, ['edit', 'create'])) {
@@ -81,9 +85,35 @@ trait CRUDHelperTrait
 		return $this->title;
 	}
 
+	public function getFullRoute()
+	{
+		return array_merge($this->route_names, $this->route_names_need_id);
+	}
+
 	public function moduleURL($module = null)
 	{
-		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module ?? $this->module);
+		$module_url  = $this->generateModuleRouteName($module ?? $this->module);
+		$route_names = $this->route_names;
+		if (null !== $slug_key) {
+			$route_names = $this->getFullRoute();
+		}
+		foreach ($route_names as $route_name) {
+			$module_url->$route_name = route($route_name, $slug_key);
+		}
+
+		$module_url->back = url()->previous() == url()->current() ? $module_url->index : url()->previous();
+
+		return $module_url;
+	}
+
+	/**
+	 * generate route name for resources module.
+	 *
+	 * @param string $module
+	 */
+	public function generateModuleRouteName($module)
+	{
+		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;
 		}
@@ -91,12 +121,11 @@ trait CRUDHelperTrait
 			throw new \Exception('Attribute [role] in ' . get_class($this) . ' Must be exsist', 1);
 		}
 
-		$list_url   = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+		$list_url   = $this->getFullRoute();
 		$module_url = new stdClass();
 		foreach ($list_url as $url) {
 			$module_url->{$url} = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
 		}
-		$module_url->back = url()->previous() == url()->current() ? route($module_url->{'index'}) : url()->previous();
 
 		return $module_url;
 	}
@@ -156,20 +185,17 @@ trait CRUDHelperTrait
 	 *
 	 * @return redirect
 	 */
-	public function redirectToIndex(Request $request)
+	public function redirectToIndex()
 	{
-		if ($request->ajax()) {
-			return [
-				'message' => $this->messageSucces($request),
-				'url'     => route($this->moduleURL()->index),
-				'type'    => 'success',
-			];
-		}
-
-		return redirect()->route($this->moduleURL()->index)
-						 ->withMessage($this->messageSucces($request));
+		return redirect()->route($this->generateModuleRouteName()->index);
 	}
 
+	/**
+	 * wrapper message success or fail.
+	 *
+	 * @param [type] $methodCUD
+	 * @param [type] $isSuccessOrFail
+	 */
 	public function messageSuccessOrFail($methodCUD, $isSuccessOrFail)
 	{
 		$entitas          = $this->title ?? 'Entitas';
@@ -179,6 +205,9 @@ trait CRUDHelperTrait
 		return sprintf($this->messageFormat(), $entitas, $translatedMethod);
 	}
 
+	/**
+	 * translate method used in crud progress to understand message response.
+	 */
 	public function translatedActionMethod()
 	{
 		return [
@@ -193,53 +222,24 @@ trait CRUDHelperTrait
 		return $isSuccess ? '%s berhasil %s' : '%s gagal %s';
 	}
 
+	/**
+	 * success message wrapper.
+	 *
+	 * @param Request $request
+	 */
 	public function messageSucces(Request $request)
 	{
 		return $this->messageSuccessOrFail($request->getMethod(), true);
 	}
 
+	/**
+	 * fail message wrapper.
+	 *
+	 * @param Request $request
+	 */
 	public function messageFail(Request $request)
 	{
 		return $this->messageSuccessOrFail($request->getMethod(), false);
-	}
-
-	/**
-	 * meng-redirect user kembali ke halaman sebelumnya beserta
-	 * input dan error.
-	 *
-	 * @return redirect
-	 */
-	public function redirectBackWithError(Request $request, $message = null)
-	{
-		$message = $message ?? $this->messageFail($request);
-		if ($request->ajax()) {
-			return [
-				'message' => $message,
-				'type'    => 'error',
-			];
-		}
-
-		return redirect()->back()->withInput()->withMessageError($message);
-	}
-
-	/**
-	 * meng-redirect user kembali ke halaman sebelumnya tanpa
-	 * input dan error.
-	 *
-	 * @return redirect
-	 */
-	public function redirectBackWithoutErrorMessage(Request $request)
-	{
-		$message = $this->messageFail($request);
-		if ($request->ajax()) {
-			return [
-				'message' => $message,
-				'type'    => 'error',
-			];
-		}
-
-		return redirect()->route($this->moduleURL()->index)
-			->withMessage($message);
 	}
 
 	/**
@@ -265,7 +265,14 @@ trait CRUDHelperTrait
 	 */
 	public function redirectSuccess(Request $request, $result = null)
 	{
-		return $this->redirectToIndex($request);
+		$formatResponse = $this->formatResponse($this->messageSucces($request));
+		if ($request->ajax()) {
+			return array_merge($data, [
+				'url' => route($this->generateModuleRouteName()->index),
+			]);
+		}
+
+		return $this->redirectToIndex()->with($formatResponse);
 	}
 
 	/**
@@ -276,13 +283,32 @@ trait CRUDHelperTrait
 	 *
 	 * @return Illuminate\Http\Response
 	 */
-	public function redirectFail(Request $request, $message = 'Gagal')
+	public function redirectFail(Request $request, $exception = null)
 	{
-		if ($message = 'Gagal') {
-			// Antisipasi jika $message tidak terisi
-			return $this->redirectBackWithoutErrorMessage($request);
-		}
+		$message          = $exception                                                    ?? $this->messageFail();
+		$message          = in_array(get_class($exception), $this->dontReportException()) ?? $exception->getMessage();
+		$formatedResponse = $this->formatResponse($message, false);
 
-		return $this->redirectBackWithError($request, $message);
+		return !$request->ajax() ? redirect()->back()->withInput()->with($formatedResponse)
+														 : array_merge($formatedResponse, ['url' => $this->generateModuleRouteName()->back]);
+	}
+
+	/**
+	 * format response from Crud progtress.
+	 *
+	 * @param string $message
+	 * @param bool   $isSuccessOrFailLevel
+	 */
+	public function formatResponse($message, $isSuccessOrFailLevel = true)
+	{
+		return [
+			'message' => $message,
+			'type'    => $isSuccessOrFailLevel ? 'success' : 'error',
+		];
+	}
+
+	public function dontReportException()
+	{
+		return config('generator.dontReportException');
 	}
 }

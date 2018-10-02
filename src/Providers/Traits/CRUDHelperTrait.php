@@ -82,7 +82,7 @@ trait CRUDHelperTrait
 
 	public function moduleURL($module = null)
 	{
-		$module = str_replace(["{$this->viewNamespace}_", '_'], ['_', '-'], $module ?? $this->module);
+		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;
 		}
@@ -159,22 +159,23 @@ trait CRUDHelperTrait
 	{
 		if ($request->ajax()) {
 			return [
-				'message' => 'Berhasil Menambah/Memperbarui data',
+				'message' => $this->messageSucces($request),
 				'url'     => route($this->moduleURL()->index),
 				'type'    => 'success',
 			];
 		}
 
 		return redirect()->route($this->moduleURL()->index)
-						 ->withMessage('Berhasil Menambah/Memperbarui data');
+						 ->withMessage($this->messageSucces($request));
 	}
 
 	public function messageSuccessOrFail($methodCUD, $isSuccessOrFail)
 	{
 		$entitas          = $this->title ?? 'Entitas';
-		$translatedMethod = $this->translatedActionMethod();
+		$translateMethod  = $this->translatedActionMethod();
+		$translatedMethod = $translatedMethod[$methodCUD] ?? 'dilakukan';
 
-		return sprintf($this->messageFormat(), $entitas, $translatedMethod[$methodCUD]);
+		return sprintf($this->messageFormat(), $entitas, $translatedMethod);
 	}
 
 	public function translatedActionMethod()

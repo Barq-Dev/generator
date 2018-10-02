@@ -210,11 +210,7 @@ trait CRUDHelperTrait
 	 */
 	public function translatedActionMethod()
 	{
-		return [
-			'POST'   => 'ditambah',
-			'PUT'    => 'diubah',
-			'DELETE' => 'dihapus',
-		];
+		return config('generator.translate_action_method');
 	}
 
 	public function messageFormat($isSuccess = true)
@@ -225,21 +221,21 @@ trait CRUDHelperTrait
 	/**
 	 * success message wrapper.
 	 *
-	 * @param Request $request
+	 * @param string $actionFrom
 	 */
-	public function messageSucces(Request $request)
+	public function messageSucces($actionFrom)
 	{
-		return $this->messageSuccessOrFail($request->getMethod(), true);
+		return $this->messageSuccessOrFail($actionFrom, true);
 	}
 
 	/**
 	 * fail message wrapper.
 	 *
-	 * @param Request $request
+	 * @param string $actionFrom
 	 */
-	public function messageFail(Request $request)
+	public function messageFail($actionFrom)
 	{
-		return $this->messageSuccessOrFail($request->getMethod(), false);
+		return $this->messageSuccessOrFail($actionFrom, false);
 	}
 
 	/**
@@ -263,9 +259,9 @@ trait CRUDHelperTrait
 	 *
 	 * @return Illuminate\Http\Response
 	 */
-	public function redirectSuccess(Request $request, $result = null)
+	public function redirectSuccess($actionFrom, Request $request, $result = null)
 	{
-		$formatResponse = $this->formatResponse($this->messageSucces($request));
+		$formatResponse = $this->formatResponse($this->messageSucces($actionFrom));
 		if ($request->ajax()) {
 			return array_merge($data, [
 				'url' => route($this->generateModuleRouteName()->index),
@@ -283,9 +279,9 @@ trait CRUDHelperTrait
 	 *
 	 * @return Illuminate\Http\Response
 	 */
-	public function redirectFail(Request $request, $exception = null)
+	public function redirectFail($actionFrom, Request $request, $exception = null)
 	{
-		$message          = $exception                                                    ?? $this->messageFail();
+		$message          = $exception                                                    ?? $this->messageFail($actionFrom);
 		$message          = in_array(get_class($exception), $this->dontReportException()) ?? $exception->getMessage();
 		$formatedResponse = $this->formatResponse($message, false);
 

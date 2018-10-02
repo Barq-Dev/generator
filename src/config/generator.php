@@ -14,4 +14,12 @@
  		'true'  => '% berhasil %',
  		'false' => '% gagal %',
  	],
+ 	/*
+	* mengatur pesan akhiran dari setiap tindakan yang dilakukan
+	*/
+ 	'translate_action_method' => [
+ 		'create' => 'ditambah',
+ 		'update' => 'diubah',
+ 		'delete' => 'dihapus',
+ 	],
  ];

@@ -6,6 +6,10 @@
 	*/
  	'dont_report_exception' => [
  	],
+ 	/*
+  * pengaturan untuk mengatur format response ketika
+  * selesai melakukan create, update atau delete
+	*/
  	'message_format' => [
  		'true'  => '% berhasil %',
  		'false' => '% gagal %',

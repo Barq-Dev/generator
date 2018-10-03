@@ -85,11 +85,20 @@ trait CRUDHelperTrait
 		return $this->title;
 	}
 
+	/**
+	 * menggabungkan antara route yang tanpa parameter dengan route yang membutuhkan parameter.
+	 */
 	public function getFullRoute()
 	{
 		return array_merge($this->route_names, $this->route_names_need_id);
 	}
 
+	/**
+	 * untuk membuat url permodule.
+	 *
+	 * @param string $module
+	 * @param array  $slug_data
+	 */
 	public function moduleURL($module = null, $slug_data = [])
 	{
 		$module_url  = $this->generateModuleRouteName($module ?? $this->module);

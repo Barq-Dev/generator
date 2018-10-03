@@ -101,14 +101,14 @@ trait CRUDHelperTrait
 	 */
 	public function moduleURL($module = null, $slug_data = [])
 	{
-		$module_url  = $this->generateModuleRouteName($module ?? $this->module);
-		$route_names = $this->route_names;
-		if (count($slug_data) > 1) {
-			$route_names = $this->getFullRoute();
-		}
-		foreach ($route_names as $route_name) {
-			$module_url->{$route_name} = route($route_name, $slug_data);
-		}
+		$module_url = $this->generateModuleRouteName($module ?? $this->module);
+		// $route_names = $this->route_names;
+		// if (count($slug_data) > 1) {
+		// 	$route_names = $this->getFullRoute();
+		// }
+		// foreach ($route_names as $route_name) {
+		// 	$module_url->{$route_name} = route($route_name, $slug_data);
+		// }
 		$module_url->back = url()->previous() == url()->current() ? $module_url->index : url()->previous();
 
 		return $module_url;

@@ -32,7 +32,7 @@ trait CRUDHelperTrait
 
 		$title_document = isset($params[1]['title_document']) ? $ $params[1]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
-		$output = call_user_func_array('view', $params)->with('module_url', $this->generateModuleRouteName())
+		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
 													->with('title', $this->title)
 													->with('title_document', $title_document);
 		if (in_array($view_name, ['edit', 'create'])) {
@@ -90,9 +90,16 @@ trait CRUDHelperTrait
 		return array_merge($this->route_names, $this->route_names_need_id);
 	}
 
-	public function moduleURL($module = null)
+	public function moduleURL($module = null, $slug_data = [])
 	{
-		$module_url       = $this->generateModuleRouteName($module ?? $this->module);
+		$module_url  = $this->generateModuleRouteName($module ?? $this->module);
+		$route_names = $this->route_names;
+		if (count($slug_data) > 1) {
+			$route_names = $this->getFullRoute();
+		}
+		foreach ($route_names as $route_name) {
+			$module_url->{$route_name} = route($route_name, $slug_data);
+		}
 		$module_url->back = url()->previous() == url()->current() ? $module_url->index : url()->previous();
 
 		return $module_url;
@@ -179,7 +186,7 @@ trait CRUDHelperTrait
 	 */
 	public function redirectToIndex()
 	{
-		return redirect()->route($this->generateModuleRouteName()->index);
+		return redirect()->route($this->moduleURL()->index);
 	}
 
 	/**
@@ -256,7 +263,7 @@ trait CRUDHelperTrait
 		$formatResponse = $this->formatResponse($this->messageSucces($actionFrom));
 		if ($request->ajax()) {
 			return array_merge($data, [
-				'url' => route($this->generateModuleRouteName()->index),
+				'url' => route($this->moduleURL()->index),
 			]);
 		}
 
@@ -278,7 +285,7 @@ trait CRUDHelperTrait
 		$formatedResponse = $this->formatResponse($message, false);
 
 		return !$request->ajax() ? redirect()->back()->withInput()->with($formatedResponse)
-														 : array_merge($formatedResponse, ['url' => $this->generateModuleRouteName()->back]);
+														 : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
 	}
 
 	/**

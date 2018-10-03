@@ -11,8 +11,8 @@
   * selesai melakukan create, update atau delete
 	*/
  	'message_format' => [
- 		'true'  => '% berhasil %',
- 		'false' => '% gagal %',
+ 		'true'  => '%s berhasil %s',
+ 		'false' => '%s gagal %s',
  	],
  	/*
 	* mengatur pesan akhiran dari setiap tindakan yang dilakukan

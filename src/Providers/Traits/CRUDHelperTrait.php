@@ -201,16 +201,16 @@ trait CRUDHelperTrait
 	/**
 	 * wrapper message success or fail.
 	 *
-	 * @param [type] $methodCUD
+	 * @param [type] $actionFrom
 	 * @param [type] $isSuccessOrFail
 	 */
-	public function messageSuccessOrFail($methodCUD, $isSuccessOrFail)
+	public function messageSuccessOrFail($actionFrom, $isSuccessOrFail)
 	{
-		$entitas          = $this->title ?? 'Entitas';
-		$translateMethod  = $this->translatedActionMethod();
-		$translatedMethod = $translatedMethod[$methodCUD] ?? 'dilakukan';
+		$entitas               = $this->title ?? 'Entitas';
+		$translateMethod       = $this->translatedActionMethod();
+		$methodAfterTranslated = $translateMethod[$actionFrom] ?? 'dilakukan';
 
-		return sprintf($this->messageFormat(), $entitas, $translatedMethod);
+		return sprintf($this->messageFormat(), $entitas, $methodAfterTranslated);
 	}
 
 	/**

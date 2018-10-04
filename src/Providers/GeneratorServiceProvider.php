@@ -32,7 +32,7 @@ class GeneratorServiceProvider extends ServiceProvider
 	public function register()
 	{
 		$this->registerBonsai();
-		$this->register();
+		$this->registerLaravelCollective();
 		$this->registerViewComponent();
 	}
 
@@ -51,5 +51,10 @@ class GeneratorServiceProvider extends ServiceProvider
 			$this->app->alias(FormFacade::class, 'Form');
 			$this->app->alias(HtmlFacade::class, 'Html');
 		}
+	}
+
+	public function registerViewComponent()
+	{
+		return;
 	}
 }

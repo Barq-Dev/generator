@@ -1,5 +1,5 @@
 <?php
-namespace Generator\Providers\Traits;
+namespace Generator\Traits;
 
 use stdClass;
 use Exception;
@@ -18,10 +18,25 @@ trait CRUDHelperTrait
 	 */
 	public function view()
 	{
+		$generateViewWithNamespace = function ($viewPath) {
+			$__generatorNameSpace = config('view.namespace');
+			if (!empty($__generatorNameSpace)) {
+				$__generatorNameSpace .= '::';
+			}
+
+			return $__generatorNameSpace . $viewPath;
+		};
 		$this->checkProperty(['title']);
 		$params = func_get_args();
 
-		if (property_exists($this, 'viewNamespace') && null !== $this->viewNamespace) {
+		if (property_exists($this, 'moduleViewNamespace') && null !== $this->moduleViewNamespace) {
+			$view_url  = str_start(str_replace(str_finish($this->moduleViewNamespace, '_'), str_finish($this->moduleViewNamespace, '::'), $params[0]), str_finish($this->moduleViewNamespace, '::'));
+			$params[0] = $view_url;
+		}
+		/*
+		 * soon will deprecated and use moduleViewNamespace
+		 */
+		elseif (property_exists($this, 'viewNamespace') && null !== $this->viewNamespace) {
 			$view_url  = str_start(str_replace(str_finish($this->viewNamespace, '_'), str_finish($this->viewNamespace, '::'), $params[0]), str_finish($this->viewNamespace, '::'));
 			$params[0] = $view_url;
 		} else {
@@ -32,18 +47,43 @@ trait CRUDHelperTrait
 
 		$title_document = isset($params[1]['title_document']) ? $ $params[1]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
-		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
-													->with('title', $this->title)
-													->with('title_document', $title_document);
+
+		$view = call_user_func('view', $params)->with([
+			'module_url'     => $this->moduleURL(),
+			'title'          => $this->title,
+			'title_document' => $title_document,
+			'role'           => $this->role,
+		]);
+
 		if (in_array($view_name, ['edit', 'create'])) {
 			$form = \implode('.', $view_folder->toArray()) . '.form';
-			$output->with('form', $form);
+			$view->with('form', $form);
 			if (method_exists($this, 'formData')) {
-				$output->with($this->formData());
+				$view->with($this->formData());
 			}
 		}
 
-		return $output;
+		if ('index' === $view_name) {
+			if (property_exists($this, 'search_view') or method_exists($this, 'searchData')) {
+				$search_view_path = $generateViewWithNamespace('search');
+				if (null !== $this->search_view) {
+					if (array_key_exists($this->search_view, config('generator.view.search.views_path')) && 'native' !== $this->search_view) {
+						throw new Exception('Search view method not supported yet');
+					} else {
+						$search_view_path = config('generator.view.search_method')[$this->search_view];
+					}
+				}
+
+				$input       = method_exists($this, 'searchData') ? $this->searchData() : [];
+				$search_form = view($search_view_path, [
+					'title_search' => sprintf(config('generator.view.search.title_format'), $this->title),
+					'input'        => $input,
+				])->render();
+				$view->with('search_view', $search_form);
+			}
+		}
+
+		return $view;
 	}
 
 	/**
@@ -121,7 +161,7 @@ trait CRUDHelperTrait
 	 */
 	public function generateModuleRouteName($module)
 	{
-		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module);
+		$module = str_replace(["{$this->moduleViewNamespace}_", '_'], ['', '-'], $module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;
 		}
@@ -206,19 +246,23 @@ trait CRUDHelperTrait
 	 */
 	public function messageSuccessOrFail($actionFrom, $isSuccessOrFail)
 	{
-		$entitas               = $this->title ?? 'Entitas';
-		$translateMethod       = $this->translatedActionMethod();
-		$methodAfterTranslated = $translateMethod[$actionFrom] ?? 'dilakukan';
+		$entitas = $this->title ?? 'Entitas';
+		$action  = $this->translatedActionMethod($actionFrom);
 
-		return sprintf($this->messageFormat(), $entitas, $methodAfterTranslated);
+		return trans($this->messageFormat(), ['title' => $entitas, 'action' => $action]);
 	}
 
 	/**
 	 * translate method used in crud progress to understand message response.
 	 */
-	public function translatedActionMethod()
+	public function translatedActionMethod($actionFrom = 'default')
 	{
-		return config('generator.translate_action_method');
+		$actionTranslated = trans("generator.translate_action_method.{$actionFrom}");
+		if (str_contains('generator.translate_action_method', $actionTranslated)) {
+			return trans('generator.translate_action_method.default');
+		}
+
+		return $actionTranslated;
 	}
 
 	public function messageFormat($isSuccess = true)

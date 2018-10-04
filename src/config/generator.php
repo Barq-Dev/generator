@@ -6,20 +6,13 @@
 	*/
  	'dont_report_exception' => [
  	],
- 	/*
-  * pengaturan untuk mengatur format response ketika
-  * selesai melakukan create, update atau delete
-	*/
- 	'message_format' => [
- 		'true'  => '%s berhasil %s',
- 		'false' => '%s gagal %s',
- 	],
- 	/*
-	* mengatur pesan akhiran dari setiap tindakan yang dilakukan
-	*/
- 	'translate_action_method' => [
- 		'create' => 'ditambah',
- 		'update' => 'diubah',
- 		'delete' => 'dihapus',
+ 	'view' => [
+ 		'namespace' => 't-component',
+ 		'search'    => [
+ 			'modal'     => 'components.widget.card',
+ 			'view_path' => [
+ 			],
+ 			'title_format' => 'Pencarian %s',
+ 		],
  	],
  ];

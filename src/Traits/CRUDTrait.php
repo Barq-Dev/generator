@@ -1,5 +1,5 @@
 <?php
-namespace Generator\Providers\Traits;
+namespace Generator\Traits;
 
 use Exception;
 use Illuminate\Http\Request;

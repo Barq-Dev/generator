@@ -55,6 +55,29 @@ class GeneratorServiceProvider extends ServiceProvider
 
 	public function registerViewComponent()
 	{
-		return;
+		Form::component('gText', generateViewWithNamespace('components.inputs.text'), [
+			'name',
+			'value'            => null,
+			'attributes'       => [],
+			'attributes_label' => [],
+		]);
+		Form::component('gSelect', generateViewWithNamespace('components.inputs.select'), [
+			'name',
+			'value'            => null,
+			'options'          => [],
+			'attributes'       => [],
+			'attributes_label' => [],
+		]);
+		Form::component('gTextArea', generateViewWithNamespace('components.inputs.textarea'), [
+			'name',
+			'value'            => null,
+			'attributes'       => [],
+			'attributes_label' => [],
+		]);
+		Form::component('gPassword', generateViewWithNamespace('components.inputs.password'), [
+			'name',
+			'attributes'       => [],
+			'attributes_label' => [],
+		]);
 	}
 }

@@ -1,6 +1,6 @@
 <div class="form-group row">
-    {!! Form::label($field['name'], $field['title'], $field['options-label'] ) !!}
+    {!! Form::label($name, $title, $attributes_label) !!}
     <div class="col-10">
-        {!! Form::text($field['name'], $field['value'] ?? null, $field['options']) !!}
+        {!! Form::select($name, $options,$value, $attributes) !!}
     </div>
 </div>

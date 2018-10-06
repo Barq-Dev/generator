@@ -65,7 +65,7 @@ trait CRUDHelperTrait
 
 		if ('index' === $view_name) {
 			if (property_exists($this, 'search_view') or method_exists($this, 'searchData')) {
-				$search_view_path = $generateViewWithNamespace('search');
+				$search_view_path = generateViewWithNamespace('search');
 				if (null !== $this->search_view) {
 					if (array_key_exists($this->search_view, config('generator.view.search.views_path')) && 'native' !== $this->search_view) {
 						throw new Exception('Search view method not supported yet');

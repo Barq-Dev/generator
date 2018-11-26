@@ -18,4 +18,9 @@ return [
 		'delete'  => 'dihapus',
 		'default' => 'dilakukan',
 	],
+	'view' => [
+		'search' => [
+			'text' => 'Cari',
+		],
+	],
 ];

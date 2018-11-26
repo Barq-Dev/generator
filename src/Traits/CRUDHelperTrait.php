@@ -77,13 +77,32 @@ trait CRUDHelperTrait
 				$input       = method_exists($this, 'searchData') ? $this->searchData() : [];
 				$search_form = view($search_view_path, [
 					'title_search' => sprintf(config('generator.view.search.title_format'), $this->title),
-					'input'        => $input,
+					'inputs'       => $this->renderSearchFormInputs($input),
+					'col'          => config('generator.view.search.slip-input', 3) / 12,
 				])->render();
 				$view->with('search_view', $search_form);
 			}
 		}
 
 		return $view;
+	}
+
+	public function renderSearchFormInput($inputs)
+	{
+		return $inputs->orderBy('place')->map(function ($item) {
+			if ('select' === $item['type']) {
+				$items['attributes'] = array_merge($items['attributes'], [
+					'data-placeholder' => $item['placeholder'],
+					'id'               => $item['name'],
+					'class'            => empty($item['class']) ? config('generator.view.search.select2-class')
+																											: sprintf('%s %s', $item['class'], config('generator.view.search.select2-class')),
+				]);
+			}
+			$input = 'select' === $item['type'] ? Form::select($item['name'], $item['options'] ?? [], $item['value'] ?? null, $items['attributes'])
+																					: Form::text($item['name'], $item['value'] ?? null, $item['attribute']);
+
+			return $input;
+		});
 	}
 
 	/**

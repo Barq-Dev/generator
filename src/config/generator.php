@@ -9,8 +9,13 @@
  	'view' => [
  		'namespace' => 't-component',
  		'search'    => [
- 			'modal'     => 'components.widget.card',
- 			'view_path' => [
+ 			'submit' => [
+ 				'icon' => 'fa fa-search',
+ 			],
+ 			'slip-input'    => 3,
+ 			'modal'         => 'components.widget.card',
+ 			'select2-class' => 'select2-default',
+ 			'view_path'     => [
  			],
  			'title_format' => 'Pencarian %s',
  		],

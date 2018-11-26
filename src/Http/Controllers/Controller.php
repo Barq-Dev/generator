@@ -18,6 +18,7 @@ class Controller extends BaseController
 	protected $role;
 	protected $request;
 	protected $moduleViewNamespace;
+	protected $baseView;
 
 	use AuthorizesRequests,
 		// AuthorizesResources,

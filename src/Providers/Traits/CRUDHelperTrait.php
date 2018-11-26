@@ -20,7 +20,11 @@ trait CRUDHelperTrait
 	{
 		$this->checkProperty(['title']);
 		$params = func_get_args();
-
+		if (property_exists($this, 'baseView')) {
+			if (null !== $this->baseView) {
+				$params[0] = str_start($params[0], str_finish($this->baseView, '.'));
+			}
+		}
 		if (property_exists($this, 'viewNamespace') && null !== $this->viewNamespace) {
 			$view_url  = str_start(str_replace(str_finish($this->viewNamespace, '_'), str_finish($this->viewNamespace, '::'), $params[0]), str_finish($this->viewNamespace, '::'));
 			$params[0] = $view_url;

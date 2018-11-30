@@ -158,7 +158,7 @@ trait CRUDHelperTrait
 			return $this->request;
 		}
 
-		return app($this->request);
+		return app($this->request ?? Request::class);
 	}
 
 	/**

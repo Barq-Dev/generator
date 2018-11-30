@@ -22,4 +22,5 @@
  		'update' => 'diubah',
  		'delete' => 'dihapus',
  	],
+ 	'url' => 'routeName',
  ];

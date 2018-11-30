@@ -4,6 +4,7 @@ namespace Generator\Providers\Traits;
 use stdClass;
 use Exception;
 use Illuminate\Http\Request;
+use Generator\Helpers\ModuleUrl;
 use Generator\Interfaces\RepositoryInterface;
 
 trait CRUDHelperTrait
@@ -136,7 +137,9 @@ trait CRUDHelperTrait
 		$list_url   = $this->getFullRoute();
 		$module_url = new stdClass();
 		foreach ($list_url as $url) {
-			$module_url->{$url} = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
+			$routeName          = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
+			$routeAction        = get_class($this) . "@$url";
+			$module_url->{$url} = new ModuleUrl($routeName, $routeAction);
 		}
 
 		return $module_url;

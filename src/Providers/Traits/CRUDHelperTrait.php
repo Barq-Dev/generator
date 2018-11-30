@@ -138,7 +138,7 @@ trait CRUDHelperTrait
 		$module_url = new stdClass();
 		foreach ($list_url as $url) {
 			$routeName          = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
-			$routeAction        = get_class($this) . "@$url";
+			$routeAction        = str_start(get_class($this), '\\') . "@$url";
 			$module_url->{$url} = new ModuleUrl($routeName, $routeAction);
 		}
 

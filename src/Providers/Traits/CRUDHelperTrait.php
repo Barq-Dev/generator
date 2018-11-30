@@ -39,7 +39,8 @@ trait CRUDHelperTrait
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
 		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
 													->with('title', $this->title)
-													->with('title_document', $title_document);
+						  ->with('title_document', $title_document)
+						  ->with('controller_class_name', str_start(get_class($this), '\\'));
 		if (in_array($view_name, ['edit', 'create'])) {
 			$form = \implode('.', $view_folder->toArray()) . '.form';
 			$output->with('form', $form);

@@ -44,7 +44,7 @@ trait CRUDHelperTrait
 						  ->with('controller_class_name', str_start(get_class($this), '\\'));
 		if (in_array($view_name, ['edit', 'create'])) {
 			$form = implode('.', $view_folder->toArray()) . '.form';
-			$output->with('form', $form)->witn('viewPrefix', implode('.', $view_folder->toArray()));
+			$output->with('form', $form)->with('viewPrefix', implode('.', $view_folder->toArray()));
 			if (method_exists($this, 'formData')) {
 				$output->with($this->formData());
 			}

@@ -33,7 +33,8 @@ trait CRUDHelperTrait
 			$view_url = $params[0];
 		}
 		$view_folder = collect(\explode('.', $view_url));
-		$view_name   = $view_folder->pop();
+
+		$view_name = $view_folder->pop();
 
 		$title_document = isset($params[1]['title_document']) ? $ $params[1]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
@@ -42,8 +43,8 @@ trait CRUDHelperTrait
 						  ->with('title_document', $title_document)
 						  ->with('controller_class_name', str_start(get_class($this), '\\'));
 		if (in_array($view_name, ['edit', 'create'])) {
-			$form = \implode('.', $view_folder->toArray()) . '.form';
-			$output->with('form', $form);
+			$form = implode('.', $view_folder->toArray()) . '.form';
+			$output->with('form', $form)->witn('viewPrefix', implode('.', $view_folder->toArray()));
 			if (method_exists($this, 'formData')) {
 				$output->with($this->formData());
 			}

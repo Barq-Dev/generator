@@ -6,14 +6,14 @@ use Illuminate\Filesystem\Filesystem;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
-	public function __construct()
-	{
-		$this->fs = app(Filesystem::class);
-	}
-
 	public function boot()
 	{
-		if ($this->fs->exist(config_path('generator.php'))) {
+		/*
+	 * @var \Illuminate\Filesystem\Filesystem
+	 */
+		$this->fs = $this->app->make(Filesystem::class);
+
+		if ($this->fs->exists(config_path('generator.php'))) {
 			$this->fs->delete(config_path('generator.php'));
 		}
 		$this->publishes([

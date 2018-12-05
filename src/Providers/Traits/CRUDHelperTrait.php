@@ -141,7 +141,7 @@ trait CRUDHelperTrait
 		foreach ($list_url as $url) {
 			$routeName          = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
 			$routeAction        = str_start(get_class($this), '\\') . "@$url";
-			$module_url->{$url} = new ModuleUrl($routeName, $routeAction, config('generator.url'));
+			$module_url->{$url} = (string) (new ModuleUrl($routeName, $routeAction, config('generator.url')));
 		}
 
 		return $module_url;
@@ -205,9 +205,9 @@ trait CRUDHelperTrait
 	public function redirectToIndex()
 	{
 		if ('routeName' === config('generator.url')) {
-			return redirect()->route($this->moduleURL()->index->__toString());
+			return redirect()->route($this->moduleURL()->index);
 		} else {
-			return redirect()->action($this->moduleURL()->index->__toString());
+			return redirect()->action($this->moduleURL()->index);
 		}
 	}
 

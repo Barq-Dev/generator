@@ -16,6 +16,6 @@ class ModuleUrl
 
 	public function __toString()
 	{
-		return $this->{$this->defaultUse} ?? '';
+		return $this->{$this->defaultUse} ?? null;
 	}
 }

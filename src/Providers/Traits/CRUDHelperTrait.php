@@ -128,6 +128,10 @@ trait CRUDHelperTrait
 	 */
 	public function generateModuleRouteName($module)
 	{
+		if (null === config('generator.url') || empty(config('generator.url'))) {
+			$config_path = config_path('generator.php');
+			throw new \Exception("config url tidak ditemukan di $config_path ", 1);
+		}
 		$module = str_replace(["{$this->viewNamespace}_", '_'], ['', '-'], $module);
 		if (property_exists($this, 'module_url')) {
 			$module = $this->module_url;

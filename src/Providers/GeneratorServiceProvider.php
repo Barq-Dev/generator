@@ -6,9 +6,9 @@ use Illuminate\Filesystem\Filesystem;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
-	public function __construct(Filesystem $fs)
+	public function __construct()
 	{
-		$this->fs = $fs;
+		$this->fs = app(Filesystem::class);
 	}
 
 	public function boot()

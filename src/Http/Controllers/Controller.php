@@ -33,7 +33,7 @@ class Controller extends BaseController
 	 *
 	 * @return [type] [description]
 	 */
-	private function getNamespace()
+	final protected function getNamespace()
 	{
 		$reflection = new \ReflectionClass($this);
 
@@ -45,7 +45,7 @@ class Controller extends BaseController
 	 * view folder dan routenya berdasarkan nama
 	 * dari class controllernya.
 	 */
-	private function generateNameModule()
+	final protected function generateNameModule()
 	{
 		if (!property_exists($this, 'module') || null == $this->module) {
 			$namespace    = $this->getNamespace();

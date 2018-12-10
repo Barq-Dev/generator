@@ -169,7 +169,7 @@ trait CRUDTrait
 	 */
 	public function destroy($id)
 	{
-		$request = request();
+		$req = request();
 		$this->generateNameModule();
 
 		DB::beginTransaction();
@@ -177,13 +177,13 @@ trait CRUDTrait
 			$this->getModel()->delete($id);
 			DB::commit();
 
-			return $this->redirectSuccess('delete', $request);
+			return $this->redirectSuccess('delete', $req);
 		} catch (Exception $e) {
 			DB::rollback();
 			if (config('app.debug')) {
 				throw $e;
 			} else {
-				return $this->redirectFail('delete', $request);
+				return $this->redirectFail('delete', $req);
 			}
 		}
 	}

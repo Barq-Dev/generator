@@ -169,7 +169,7 @@ trait CRUDTrait
 	 */
 	public function destroy($id)
 	{
-		$request = $this->getRequest();
+		$request = request();
 		$this->generateNameModule();
 
 		DB::beginTransaction();

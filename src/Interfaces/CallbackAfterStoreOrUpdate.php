@@ -13,8 +13,9 @@ interface CallbackAfterStoreOrUpdate
 	 * hal lain setelah terjadinya penyimpanan
 	 * atau perubahan data.
 	 *
-	 * @param Illuminate\Database\Eloquent\Model $model
-	 * @param Illuminate\Http\Request            $request
+	 * @param Illuminate\Database\Eloquent\Model      $model
+	 * @param Illuminate\Http\Request                 $request
+	 * @param Illuminate\Database\Eloquent\Model|null $modelBefore
 	 */
-	public function callbackAfterStoreOrUpdate($model, $request);
+	public function callbackAfterStoreOrUpdate($model, $request, $modelBefore = null);
 }

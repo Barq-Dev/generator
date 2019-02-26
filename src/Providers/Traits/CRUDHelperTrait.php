@@ -309,12 +309,13 @@ trait CRUDHelperTrait
 	 */
 	public function redirectFail($actionFrom, Request $request, $exception = null)
 	{
-		$message          = $exception                                                    ?? $this->messageFail($actionFrom);
-		$message          = in_array(get_class($exception), $this->dontReportException()) ?? $exception->getMessage();
-		$formatedResponse = $this->formatResponse($message, false);
+		$shouldGetMessageException = in_array(get_class($exception), $this->dontReportException());
+		$message                   = $exception ?? $this->messageFail($actionFrom);
+		$message                   = $shouldGetMessageException ? $this->messageFail($actionFrom) : $exception->getMessage();
+		$formatedResponse          = $this->formatResponse($message, false);
 
 		return !$request->ajax() ? redirect()->back()->withInput()->with($formatedResponse)
-														 : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
+														   : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
 	}
 
 	/**

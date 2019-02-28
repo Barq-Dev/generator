@@ -63,9 +63,12 @@ trait CRUDTrait
 		try {
 			$resul = $this->getModel()->insert($request->only($this->getRequestField()));
 			if ($this instanceof CallbackAfterStoreOrUpdate) {
-				$this->callbackAfterStoreOrUpdate($resul, $request, null);
+				$callbackResult = $this->callbackAfterStoreOrUpdate($resul, $request, null);
 			}
 			DB::commit();
+			if (null !== $callbackResult) {
+				return $callbackResult;
+			}
 
 			return $this->redirectSuccess('create', $request, $resul);
 		} catch (Exception $e) {
@@ -151,9 +154,12 @@ trait CRUDTrait
 			}
 			$result = $this->getModel()->update($id, $request->only($this->getRequestField()));
 			if ($this instanceof CallbackAfterStoreOrUpdate) {
-				$this->callbackAfterStoreOrUpdate($result, $request, $modeBefore);
+				$callbackResult = $this->callbackAfterStoreOrUpdate($result, $request, $modeBefore);
 			}
 			DB::commit();
+			if (null !== $callbackResult) {
+				return $callbackResult;
+			}
 
 			return $this->redirectSuccess('update', $request, $result);
 		} catch (Exception $e) {

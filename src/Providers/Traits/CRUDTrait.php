@@ -66,7 +66,7 @@ trait CRUDTrait
 				$callbackResult = $this->callbackAfterStoreOrUpdate($resul, $request, null);
 			}
 			DB::commit();
-			if (null !== $callbackResult) {
+			if (isset($callbackResult) && null !== $callbackResult) {
 				return $callbackResult;
 			}
 
@@ -157,7 +157,7 @@ trait CRUDTrait
 				$callbackResult = $this->callbackAfterStoreOrUpdate($result, $request, $modeBefore);
 			}
 			DB::commit();
-			if (null !== $callbackResult) {
+			if (isset($callbackResult) && null !== $callbackResult) {
 				return $callbackResult;
 			}
 

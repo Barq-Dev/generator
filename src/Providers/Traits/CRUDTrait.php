@@ -61,16 +61,13 @@ trait CRUDTrait
 		}
 		DB::beginTransaction();
 		try {
-			$resul = $this->getModel()->insert($request->only($this->getRequestField()));
+			$result = $this->getModel()->insert($request->only($this->getRequestField()));
 			if ($this instanceof CallbackAfterStoreOrUpdate) {
-				$callbackResult = $this->callbackAfterStoreOrUpdate($resul, $request, null);
+				$result = $this->callbackAfterStoreOrUpdate($result, $request, null);
 			}
 			DB::commit();
-			if (isset($callbackResult) && null !== $callbackResult) {
-				return $callbackResult;
-			}
 
-			return $this->redirectSuccess('create', $request, $resul);
+			return $this->redirectSuccess('create', $request, $result);
 		} catch (Exception $e) {
 			DB::rollback();
 			if (config('app.debug')) {
@@ -154,12 +151,9 @@ trait CRUDTrait
 			}
 			$result = $this->getModel()->update($id, $request->only($this->getRequestField()));
 			if ($this instanceof CallbackAfterStoreOrUpdate) {
-				$callbackResult = $this->callbackAfterStoreOrUpdate($result, $request, $modeBefore);
+				$result = $this->callbackAfterStoreOrUpdate($result, $request, $modeBefore);
 			}
 			DB::commit();
-			if (isset($callbackResult) && null !== $callbackResult) {
-				return $callbackResult;
-			}
 
 			return $this->redirectSuccess('update', $request, $result);
 		} catch (Exception $e) {

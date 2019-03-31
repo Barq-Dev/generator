@@ -226,7 +226,7 @@ trait CRUDHelperTrait
 	{
 		$entitas               = $this->title ?? 'Entitas';
 		$translateMethod       = $this->translatedActionMethod();
-		$methodAfterTranslated = $translateMethod[$actionFrom] ?? 'dilakukan';
+		$methodAfterTranslated = $translateMethod[$actionFrom] ?? $actionFrom;
 
 		return sprintf($this->messageFormat(), $entitas, $methodAfterTranslated);
 	}

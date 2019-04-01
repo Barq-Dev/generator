@@ -24,7 +24,7 @@ trait CRUDTrait
 			$items = $this->getModel()->getItems();
 		}
 
-		return $this->view($this->module . '.index', compact('items'));
+		return $this->view('index', compact('items'));
 	}
 
 	/**
@@ -36,7 +36,7 @@ trait CRUDTrait
 	{
 		$this->generateNameModule();
 
-		$view = $this->view($this->module . '.create');
+		$view = $this->view('create');
 
 		if (method_exists($this, 'embedData')) {
 			$view->with($this->embedData(null));
@@ -90,7 +90,7 @@ trait CRUDTrait
 		$this->generateNameModule();
 		$item = $this->getModel()->finditem($id);
 
-		$view = $this->view($this->module . '.show', ['item' => $item]);
+		$view = $this->view('show', ['item' => $item]);
 		if (method_exists($this, 'embedDataToShow')) {
 			$view->with($this->embedDataToShow($id, collect(request()->all())));
 		}
@@ -109,7 +109,7 @@ trait CRUDTrait
 	{
 		$this->generateNameModule();
 		$item = $this->getModel()->findItem($id);
-		$view = $this->view($this->module . '.edit', ['item' => $item]);
+		$view = $this->view('edit', ['item' => $item]);
 		//it will deprecated
 		if (method_exists($this, 'embedDataToEdit')) {
 			$view->with($this->embedDataToEdit($id));

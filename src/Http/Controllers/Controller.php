@@ -19,6 +19,7 @@ class Controller extends BaseController
 	protected $request;
 	protected $viewNamespace;
 	protected $baseView;
+	protected $locationView;
 
 	use AuthorizesRequests,
 		// AuthorizesResources,
@@ -53,5 +54,34 @@ class Controller extends BaseController
 		} else {
 			$this->module = str_replace('-', '_', $this->module);
 		}
+		$this->registerLocationView();
+	}
+
+	/**
+	 * untuk register view location default dari controller.
+	 */
+	final protected function registerLocationView()
+	{
+		$this->locationView = '';
+
+		if (null !== $this->viewNamespace) {
+			$this->locationView .= $this->viewNamespace;
+		}
+		if (null !== $this->baseView) {
+			$this->locationView .= $this->baseView;
+		}
+		if (null !== $this->module) {
+			$this->locationView .= ".$this->module";
+		}
+	}
+
+	/**
+	 * menggabungkan base view dengan view yang akan di akses.
+	 *
+	 * @param string $viewName
+	 */
+	protected function loadViewName($viewName)
+	{
+		return "{$this->locationView}.$viewName";
 	}
 }

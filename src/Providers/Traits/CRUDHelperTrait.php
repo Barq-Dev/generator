@@ -20,29 +20,17 @@ trait CRUDHelperTrait
 	public function view()
 	{
 		$this->checkProperty(['title']);
-		$params = func_get_args();
-		if (property_exists($this, 'baseView')) {
-			if (null !== $this->baseView) {
-				$params[0] = str_start($params[0], str_finish($this->baseView, '.'));
-			}
-		}
-		if (property_exists($this, 'viewNamespace') && null !== $this->viewNamespace) {
-			$view_url  = str_start(str_replace(str_finish($this->viewNamespace, '_'), str_finish($this->viewNamespace, '::'), $params[0]), str_finish($this->viewNamespace, '::'));
-			$params[0] = $view_url;
-		} else {
-			$view_url = $params[0];
-		}
-		$view_folder = collect(\explode('.', $view_url));
-
-		$view_name = $view_folder->pop();
-
-		$title_document = isset($params[1]['title_document']) ? $ $params[1]['title_document'] : $this->makeTitleDocument($view_url);
+		$params         = func_get_args();
+		$view_url       = $params[0]       = $this->loadViewName($params[0]);
+		$view_folder    = collect(\explode('.', $view_url));
+		$view_name      = $view_folder->pop();
+		$title_document = isset($params[1]['title_document']) ? $$params[1]['title_document'] : $this->makeTitleDocument($view_url);
 		// $title = \str_replace(['-', 'controller'], ' ', ucfirst(kebab_case(class_basename(get_class($this)))));
 		$output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
-													->with('title', $this->title)
-													->with('title_document', $title_document)
-							  ->with('controller_class_name', str_start(get_class($this), '\\'))
-							  ->with('viewPrefix', implode('.', $view_folder->toArray()));
+	  ->with('title', $this->title)
+	  ->with('title_document', $title_document)
+	  ->with('controller_class_name', str_start(get_class($this), '\\'))
+	  ->with('viewPrefix', implode('.', $view_folder->toArray()));
 		if (in_array($view_name, ['edit', 'create'])) {
 			$form = implode('.', $view_folder->toArray()) . '.form';
 			$output->with('form', $form);
@@ -280,8 +268,8 @@ trait CRUDHelperTrait
 	/**
 	 * make redirect if store or update is success.
 	 *
-	 * @param ReIlluminate\Http\Request          $request
-	 * @param Illuminate\Database\Eloquent\Model $result
+	 * @param ReIlluminate\Http\Request                                        $request
+	 * @param Illuminate\Database\Eloquent\Model|Illuminate\Support\Collection $result
 	 *
 	 * @return Illuminate\Http\Response
 	 */
@@ -290,8 +278,17 @@ trait CRUDHelperTrait
 		$formatResponse = $this->formatResponse($this->messageSucces($actionFrom));
 		if ($request->ajax()) {
 			$route = (string) $this->moduleURL()->index;
+			if (!is_array($result)) {
+				if ($result  instanceof Illuminate\Support\Collection) {
+					$result = $result->toArray();
+				} elseif ($result  instanceof Illuminate\Database\Eloquent\Model) {
+					$result = $result->toArray();
+				} else {
+					$result = (array) $result;
+				}
+			}
 
-			return array_merge($data, [
+			return array_merge($result, [
 				'url' => 'routeName' === config('generator.url') ? route($route) : action($route),
 			]);
 		}
@@ -315,7 +312,7 @@ trait CRUDHelperTrait
 		$formatedResponse          = $this->formatResponse($message, false);
 
 		return !$request->ajax() ? redirect()->back()->withInput()->with($formatedResponse)
-														   : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
+	  : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
 	}
 
 	/**

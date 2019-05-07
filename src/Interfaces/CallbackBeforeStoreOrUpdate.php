@@ -8,13 +8,13 @@ namespace Generator\Interfaces;
  */
 interface CallbackBeforeStoreOrUpdate
 {
-	/**
-	 * fungsi untuk melakukan callback sebelum
-	 * terjadinya penyimpanan dan pengupdatetan data.
-	 *
-	 * @param Illuminate\Http\Request $request
-	 *
-	 * @return Illuminate\Http\Request
-	 */
-	public function callbackBeforeStoreOrUpdate($request);
+  /**
+   * fungsi untuk melakukan callback sebelum
+   * terjadinya penyimpanan dan pengupdatetan data.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\Request
+   */
+  public function callbackBeforeStoreOrUpdate($request);
 }

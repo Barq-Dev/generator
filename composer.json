@@ -1,5 +1,5 @@
 {
-    "name": "thortech/generator",
+    "name": "barq-dev/generator",
     "description": "module unutk memudahkan pembuatan CRUD dengan menggunakan pola yang umum digunakan",
     "type": "library",
     "license": "MIT",

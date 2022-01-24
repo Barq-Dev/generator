@@ -22,7 +22,7 @@
     "require": {
       "php": "^7.1.3",
       "laravelcollective/html":"^6.0",
-      "caffeinated/bonsai": "^3.0"
+      "caffeinated/bonsai": "^4.0"
     },
     "extra": {
       "laravel":{

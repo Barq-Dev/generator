@@ -1,6 +1,7 @@
 <?php
 namespace Generator\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Generator\Providers\Traits\CRUDHelperTrait;
 use Generator\Providers\Traits\CRUDTrait;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -50,7 +51,7 @@ class Controller extends BaseController
 	{
 		if (!property_exists($this, 'module') || null == $this->module) {
 			$namespace    = $this->getNamespace();
-			$this->module = snake_case(str_replace([$namespace, 'Controller', '\\'], '', get_class($this)));
+			$this->module = Str::snake(str_replace([$namespace, 'Controller', '\\'], '', get_class($this)));
 		} else {
 			$this->module = str_replace('-', '_', $this->module);
 		}

@@ -278,7 +278,7 @@ trait CRUDHelperTrait
   public function redirectSuccess($actionFrom, Request $request, $result = null)
   {
     $formatResponse = $this->formatResponse($this->messageSucces($actionFrom));
-    if ($request->ajax() && $request->wantsJson()) {
+    if ($request->ajax()) {
       $route = (string)$this->moduleURL()->index;
       if (!is_array($result)) {
         if ($result  instanceof \Illuminate\Support\Collection) {
@@ -314,7 +314,7 @@ trait CRUDHelperTrait
     $message                   = $shouldGetMessageException ? $this->messageFail($actionFrom) : $exception->getMessage();
     $formatedResponse          = $this->formatResponse($message, false);
 
-    return (!$request->ajax() && !$request->wantsJson()) ? redirect()->back()->withInput()->with($formatedResponse)
+    return (!$request->ajax()) ? redirect()->back()->withInput()->with($formatedResponse)
       : array_merge($formatedResponse, ['url' => $this->moduleURL()->back]);
   }
 

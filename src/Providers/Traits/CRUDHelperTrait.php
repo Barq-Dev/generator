@@ -3,6 +3,7 @@ namespace Generator\Providers\Traits;
 
 use stdClass;
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Generator\Helpers\ModuleUrl;
 use Generator\Interfaces\RepositoryInterface;
@@ -29,7 +30,7 @@ trait CRUDHelperTrait
     $output = call_user_func_array('view', $params)->with('module_url', $this->moduleURL())
       ->with('title', $this->title)
       ->with('title_document', $title_document)
-      ->with('controller_class_name', str_start(get_class($this), '\\'))
+      ->with('controller_class_name', str_replace('App\Http\Controllers\\',"",get_class($this)))
       ->with('viewPrefix', implode('.', $view_folder->toArray()));
     if (in_array($view_name, ['edit', 'create'])) {
       $form = implode('.', $view_folder->toArray()) . '.form';
@@ -133,7 +134,8 @@ trait CRUDHelperTrait
     $module_url = new stdClass();
     foreach ($list_url as $url) {
       $routeName          = null === $this->role ? "$module.$url" : "{$this->role}.$module.$url";
-      $routeAction        = str_start(get_class($this), '\\') . "@$url";
+      $routeAction        = str_replace('App\Http\Controllers\\',"",get_class($this)) . "@$url";
+      // dd(str_replace('App\Http\Controllers\\',"",get_class($this)));
       $module_url->{$url} = (string)(new ModuleUrl($routeName, $routeAction, config('generator.url')));
     }
 
